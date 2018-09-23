@@ -1,0 +1,35 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VRShatter", "Assembly-CSharp.csproj", "{40D11DF1-A413-0430-CA86-79EB1900A8AC}"
+EndProject
+Project("{7BE16901-4C3E-90FD-5D99-15D0692CC41E}") = "VRShatter", "Assembly-UnityScript.unityproj", "{99938D97-4297-E47A-800B-22FEDCA86D4D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VRShatter", "Assembly-CSharp-Editor.csproj", "{C5B2DAAA-8692-6E25-A3C3-EDD77B70BE2D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{40D11DF1-A413-0430-CA86-79EB1900A8AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40D11DF1-A413-0430-CA86-79EB1900A8AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40D11DF1-A413-0430-CA86-79EB1900A8AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40D11DF1-A413-0430-CA86-79EB1900A8AC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{99938D97-4297-E47A-800B-22FEDCA86D4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99938D97-4297-E47A-800B-22FEDCA86D4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99938D97-4297-E47A-800B-22FEDCA86D4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99938D97-4297-E47A-800B-22FEDCA86D4D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5B2DAAA-8692-6E25-A3C3-EDD77B70BE2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5B2DAAA-8692-6E25-A3C3-EDD77B70BE2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5B2DAAA-8692-6E25-A3C3-EDD77B70BE2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5B2DAAA-8692-6E25-A3C3-EDD77B70BE2D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = Assembly-CSharp.csproj
+	EndGlobalSection
+EndGlobal
