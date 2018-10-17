@@ -25,6 +25,14 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
+#if UNITY_2017_2_OR_NEWER
+using InputTracking = UnityEngine.XR.InputTracking;
+using Node = UnityEngine.XR.XRNode;
+#else
+using InputTracking = UnityEngine.VR.InputTracking;
+using Node = UnityEngine.VR.VRNode;
+#endif
+
 /// <summary>
 /// Provides a unified input system for Oculus controllers and gamepads.
 /// </summary>
@@ -372,7 +380,7 @@ public static class OVRInput
 
 		double predictionSeconds = (double)fixedUpdateCount * Time.fixedDeltaTime / Mathf.Max(Time.timeScale, 1e-6f);
 		fixedUpdateCount++;
-		
+
 		OVRPlugin.UpdateNodePhysicsPoses(0, predictionSeconds);
 	}
 
@@ -415,7 +423,7 @@ public static class OVRInput
 	}
 
 	/// <summary>
-	/// Gets the position of the given Controller local to its tracking space.
+	/// Gets the position of the given Controller relative to its local coordinate space.
 	/// Only supported for Oculus LTouch and RTouch controllers. Non-tracked controllers will return Vector3.zero.
 	/// </summary>
 	public static Vector3 GetLocalControllerPosition(OVRInput.Controller controllerType)
@@ -424,17 +432,17 @@ public static class OVRInput
 		{
 			case Controller.LTouch:
 			case Controller.LTrackedRemote:
-                return OVRPlugin.GetNodePose(OVRPlugin.Node.HandLeft, stepType).ToOVRPose().position;
-            case Controller.RTouch:
+				return InputTracking.GetLocalPosition(Node.LeftHand);
+			case Controller.RTouch:
 			case Controller.RTrackedRemote:
-                return OVRPlugin.GetNodePose(OVRPlugin.Node.HandRight, stepType).ToOVRPose().position;
-            default:
+				return InputTracking.GetLocalPosition(Node.RightHand);
+			default:
 				return Vector3.zero;
 		}
 	}
 
 	/// <summary>
-    /// Gets the linear velocity of the given Controller local to its tracking space.
+    /// Gets the linear velocity of the given Controller relative to its local coordinate space.
     /// Only supported for Oculus LTouch and RTouch controllers. Non-tracked controllers will return Vector3.zero.
     /// </summary>
     public static Vector3 GetLocalControllerVelocity(OVRInput.Controller controllerType)
@@ -443,17 +451,17 @@ public static class OVRInput
         {
             case Controller.LTouch:
 			case Controller.LTrackedRemote:
-				return OVRPlugin.GetNodeVelocity(OVRPlugin.Node.HandLeft, stepType).FromFlippedZVector3f();
-            case Controller.RTouch:
+				return OVRNodeStateProperties.GetNodeStateProperty(Node.LeftHand, NodeStatePropertyType.Velocity, OVRPlugin.Node.HandLeft, stepType);
+			case Controller.RTouch:
 			case Controller.RTrackedRemote:
-				return OVRPlugin.GetNodeVelocity(OVRPlugin.Node.HandRight, stepType).FromFlippedZVector3f();
-            default:
+				return OVRNodeStateProperties.GetNodeStateProperty(Node.RightHand, NodeStatePropertyType.Velocity, OVRPlugin.Node.HandRight, stepType);
+			default:
                 return Vector3.zero;
         }
     }
 
     /// <summary>
-    /// Gets the linear acceleration of the given Controller local to its tracking space.
+    /// Gets the linear acceleration of the given Controller relative to its local coordinate space.
     /// Only supported for Oculus LTouch and RTouch controllers. Non-tracked controllers will return Vector3.zero.
     /// </summary>
     public static Vector3 GetLocalControllerAcceleration(OVRInput.Controller controllerType)
@@ -462,17 +470,17 @@ public static class OVRInput
         {
             case Controller.LTouch:
 			case Controller.LTrackedRemote:
-				return OVRPlugin.GetNodeAcceleration(OVRPlugin.Node.HandLeft, stepType).FromFlippedZVector3f();
-            case Controller.RTouch:
+				return OVRNodeStateProperties.GetNodeStateProperty(Node.LeftHand, NodeStatePropertyType.Acceleration, OVRPlugin.Node.HandLeft, stepType);
+			case Controller.RTouch:
 			case Controller.RTrackedRemote:
-				return OVRPlugin.GetNodeAcceleration(OVRPlugin.Node.HandRight, stepType).FromFlippedZVector3f();
-            default:
+				return OVRNodeStateProperties.GetNodeStateProperty(Node.RightHand, NodeStatePropertyType.Acceleration, OVRPlugin.Node.HandRight, stepType);
+			default:
                 return Vector3.zero;
         }
     }
 
 	/// <summary>
-	/// Gets the rotation of the given Controller local to its tracking space.
+	/// Gets the rotation of the given Controller relative to its local coordinate space.
 	/// Only supported for Oculus LTouch and RTouch controllers. Non-tracked controllers will return Quaternion.identity.
 	/// </summary>
 	public static Quaternion GetLocalControllerRotation(OVRInput.Controller controllerType)
@@ -481,17 +489,17 @@ public static class OVRInput
 		{
 			case Controller.LTouch:
 			case Controller.LTrackedRemote:
-				return OVRPlugin.GetNodePose(OVRPlugin.Node.HandLeft, stepType).ToOVRPose().orientation;
-            case Controller.RTouch:
+				return InputTracking.GetLocalRotation(Node.LeftHand);
+			case Controller.RTouch:
 			case Controller.RTrackedRemote:
-				return OVRPlugin.GetNodePose(OVRPlugin.Node.HandRight, stepType).ToOVRPose().orientation;
-            default:
+				return InputTracking.GetLocalRotation(Node.RightHand);
+			default:
 				return Quaternion.identity;
 		}
 	}
 
 	/// <summary>
-	/// Gets the angular velocity of the given Controller local to its tracking space in radians per second around each axis.
+	/// Gets the angular velocity of the given Controller relative to its local coordinate space in radians per second around each axis.
 	/// Only supported for Oculus LTouch and RTouch controllers. Non-tracked controllers will return Vector3.zero.
 	/// </summary>
 	public static Vector3 GetLocalControllerAngularVelocity(OVRInput.Controller controllerType)
@@ -500,17 +508,17 @@ public static class OVRInput
 		{
 		case Controller.LTouch:
 		case Controller.LTrackedRemote:
-			return OVRPlugin.GetNodeAngularVelocity(OVRPlugin.Node.HandLeft, stepType).FromFlippedZVector3f();
+			return OVRNodeStateProperties.GetNodeStateProperty(Node.LeftHand, NodeStatePropertyType.AngularVelocity, OVRPlugin.Node.HandLeft, stepType);
 		case Controller.RTouch:
 		case Controller.RTrackedRemote:
-			return OVRPlugin.GetNodeAngularVelocity(OVRPlugin.Node.HandRight, stepType).FromFlippedZVector3f();
+			return OVRNodeStateProperties.GetNodeStateProperty(Node.RightHand, NodeStatePropertyType.AngularVelocity, OVRPlugin.Node.HandRight, stepType);
 		default:
 			return Vector3.zero;
 		}
 	}
 
 	/// <summary>
-	/// Gets the angular acceleration of the given Controller local to its tracking space in radians per second per second around each axis.
+	/// Gets the angular acceleration of the given Controller relative to its local coordinate space in radians per second per second around each axis.
 	/// Only supported for Oculus LTouch and RTouch controllers. Non-tracked controllers will return Vector3.zero.
 	/// </summary>
 	public static Vector3 GetLocalControllerAngularAcceleration(OVRInput.Controller controllerType)
@@ -519,10 +527,10 @@ public static class OVRInput
 		{
 		case Controller.LTouch:
 		case Controller.LTrackedRemote:
-			return OVRPlugin.GetNodeAngularAcceleration(OVRPlugin.Node.HandLeft, stepType).FromFlippedZVector3f();
+			return OVRNodeStateProperties.GetNodeStateProperty(Node.LeftHand, NodeStatePropertyType.AngularAcceleration, OVRPlugin.Node.HandLeft, stepType);
 		case Controller.RTouch:
 		case Controller.RTrackedRemote:
-			return OVRPlugin.GetNodeAngularAcceleration(OVRPlugin.Node.HandRight, stepType).FromFlippedZVector3f();
+			return OVRNodeStateProperties.GetNodeStateProperty(Node.RightHand, NodeStatePropertyType.AngularAcceleration, OVRPlugin.Node.HandRight, stepType);
 		default:
 			return Vector3.zero;
 		}
@@ -1118,7 +1126,7 @@ public static class OVRInput
 	{
 		return connectedControllerTypes;
 	}
-    
+
 	/// <summary>
 	/// Returns true if the specified controller type is currently connected.
 	/// </summary>

@@ -5,19 +5,26 @@ using UnityEngine;
 public class PlayerScript : MonoBehaviour {
 
     public GameObject projectilePrefab;
+    private float reloadTime = 0.5f;
+    private bool reload = false;
 	
 	// Update is called once per frame
 	void Update () {
         bool is_pressed = false;
-        if (OVRInput.IsControllerConnected(OVRInput.Controller.RTrackedRemote)) {
-            is_pressed = OVRInput.GetDown(OVRInput.Button.One); 
-        }
-        is_pressed = Input.GetMouseButtonDown(0);
+        is_pressed = OVRInput.Get(OVRInput.Button.One);
 
-        if (is_pressed) {
+        if (is_pressed && !reload) {
             Fire();
+            reload = true;
+            StartCoroutine(waitReload());
         }
-	}
+    }
+
+    public IEnumerator waitReload()
+    {
+        yield return new WaitForSeconds(reloadTime);
+        reload = false;
+    }
 
     void Fire()
     {
@@ -26,19 +33,16 @@ public class PlayerScript : MonoBehaviour {
         var rotation = transform.rotation;
 
         var convergingDistance = 5.0f;
-        var mousePos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, convergingDistance));
         //mousePos = Vector3.Scale(mousePos, new Vector3( (float) 1 / (Screen.width / 2), (float) 1 / (Screen.height / 2), 1.0f));
         //Debug.Log(mousePos);
         //var mouseMag = mousePos.magnitude;
         //var mouseVec = (rotation * mousePos.normalized) * mousePos.magnitude;
 
 
+        position = OVRInput.GetLocalControllerPosition(OVRInput.Controller.RTouch);
+        rotation = OVRInput.GetLocalControllerRotation(OVRInput.Controller.RTouch);
 
-        //if (OVRInput.IsControllerConnected(OVRInput.Controller.RTrackedRemote))
-        //{
-        //    position = OVRInput.GetLocalControllerPosition(OVRInput.Controller.RTouch);
-        //    rotation = OVRInput.GetLocalControllerRotation(OVRInput.Controller.RTouch);
-        //}
+        //var mousePos = Camera.main.ScreenToWorldPoint(new Vector3(position.x, position.y, convergingDistance));
 
         // Create the Projectile from the Projectile Prefab
         var projectile = (GameObject)Instantiate(
@@ -48,7 +52,7 @@ public class PlayerScript : MonoBehaviour {
          
         // Add velocity to the bullet
         //projectile.GetComponent<Rigidbody>().velocity = transform.TransformDirection(mouseVec * 4.0f);
-        projectile.transform.LookAt(mousePos);
+        //projectile.transform.LookAt(mousePos);
         projectile.GetComponent<Rigidbody>().AddForce(projectile.transform.forward * 15.0f);
 
         // Destroy the bullet after 2 seconds

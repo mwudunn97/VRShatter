@@ -144,23 +144,26 @@ public class OVRCameraRig : MonoBehaviour
 		}
 
 		bool monoscopic = OVRManager.instance.monoscopic;
+		bool hmdPresent = OVRNodeStateProperties.IsHmdPresent();
 
 		OVRPose tracker = OVRManager.tracker.GetPose();
 
 		trackerAnchor.localRotation = tracker.orientation;
 
-		centerEyeAnchor.localRotation = InputTracking.GetLocalRotation(Node.CenterEye);
-		leftEyeAnchor.localRotation = monoscopic ? centerEyeAnchor.localRotation : InputTracking.GetLocalRotation(Node.LeftEye);
-		rightEyeAnchor.localRotation = monoscopic ? centerEyeAnchor.localRotation : InputTracking.GetLocalRotation(Node.RightEye);
+		Quaternion emulatedRotation = Quaternion.Euler(-OVRManager.instance.headPoseRelativeOffsetRotation.x, -OVRManager.instance.headPoseRelativeOffsetRotation.y, OVRManager.instance.headPoseRelativeOffsetRotation.z);
+
+		centerEyeAnchor.localRotation = hmdPresent ? InputTracking.GetLocalRotation(Node.CenterEye) : emulatedRotation;
+		leftEyeAnchor.localRotation = (!hmdPresent || monoscopic) ? centerEyeAnchor.localRotation : InputTracking.GetLocalRotation(Node.LeftEye);
+		rightEyeAnchor.localRotation = (!hmdPresent || monoscopic) ? centerEyeAnchor.localRotation : InputTracking.GetLocalRotation(Node.RightEye);
 
 		leftHandAnchor.localRotation = InputTracking.GetLocalRotation(Node.LeftHand);
 		rightHandAnchor.localRotation = InputTracking.GetLocalRotation(Node.RightHand);
 
 		trackerAnchor.localPosition = tracker.position;
 
-		centerEyeAnchor.localPosition = InputTracking.GetLocalPosition(Node.CenterEye);
-		leftEyeAnchor.localPosition = monoscopic ? centerEyeAnchor.localPosition : InputTracking.GetLocalPosition(Node.LeftEye);
-		rightEyeAnchor.localPosition = monoscopic ? centerEyeAnchor.localPosition : InputTracking.GetLocalPosition(Node.RightEye);
+		centerEyeAnchor.localPosition = hmdPresent ? InputTracking.GetLocalPosition(Node.CenterEye) : OVRManager.instance.headPoseRelativeOffsetTranslation;
+		leftEyeAnchor.localPosition = (!hmdPresent || monoscopic) ? centerEyeAnchor.localPosition : InputTracking.GetLocalPosition(Node.LeftEye);
+		rightEyeAnchor.localPosition = (!hmdPresent || monoscopic) ? centerEyeAnchor.localPosition : InputTracking.GetLocalPosition(Node.RightEye);
 
 		leftHandAnchor.localPosition = InputTracking.GetLocalPosition(Node.LeftHand);
 		rightHandAnchor.localPosition = InputTracking.GetLocalPosition(Node.RightHand);

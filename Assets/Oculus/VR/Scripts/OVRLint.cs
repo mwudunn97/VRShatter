@@ -293,6 +293,24 @@ public class OVRLint : EditorWindow
 		}
 #endif
 
+#if UNITY_2017_3_OR_NEWER && !UNITY_ANDROID
+		if (!PlayerSettings.VROculus.dashSupport)
+		{
+			AddFix("Enable Dash Integration", "We recommend to enable Dash Integration for better user experience.", delegate (UnityEngine.Object obj, bool last, int selected)
+			{
+				PlayerSettings.VROculus.dashSupport = true;
+			}, null, "Fix");
+		}
+
+		if (!PlayerSettings.VROculus.sharedDepthBuffer)
+		{
+			AddFix("Enable Depth Buffer Sharing", "We recommend to enable Depth Buffer Sharing for better user experience on Oculus Dash.", delegate (UnityEngine.Object obj, bool last, int selected)
+			{
+				PlayerSettings.VROculus.sharedDepthBuffer = true;
+			}, null, "Fix");
+		}
+#endif
+
 		BuildTargetGroup target = EditorUserBuildSettings.selectedBuildTargetGroup;
 		var tier = UnityEngine.Rendering.GraphicsTier.Tier1;
 		var tierSettings = UnityEditor.Rendering.EditorGraphicsSettings.GetTierSettings(target, tier);

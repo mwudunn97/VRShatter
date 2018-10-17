@@ -270,10 +270,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   skinnedMeshRenderer: {fileID: 13719198}
-  VisemeToBlendTargets: 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-  enableVisemeSignals: 0
-  KeySendVisemeSignal: 00000000000000000000000000000000000000000000000000000000000000000000000000000000
-  SmoothAmount: 100
+  visemeToBlendTargets: 000000000100000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000c0000000d0000000e000000
+  enableVisemeTestKeys: 0
+  visemeTestKeys: 600000000900000071000000770000006500000072000000740000007900000075000000690000006f000000700000005b0000005d0000005c000000
+  smoothAmount: 70
 --- !u!114 &114119601008119326
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -286,13 +286,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   audioSource: {fileID: 0}
-  GuiSelectDevice: 1
-  sensitivity: 100
-  sourceVolume: 100
+  enableMicSelectionGUI: 0
+  micSelectionGUIKey: 109
+  micInputVolume: 100
   micFrequency: 48000
   micControl: 2
+  micActivationKey: 32
   selectedDevice: 
-  loudness: 0
 --- !u!114 &114997623160390080
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -306,9 +306,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   audioSource: {fileID: 0}
   provider: 1
-  gain: 1
-  audioMute: 1
-  loopback: 108
-  debugVisemes: 100
+  enableKeyboardInput: 0
+  enableTouchInput: 0
+  audioLoopback: 0
+  loopbackKey: 108
   showVisemes: 0
-  delayCompensate: 0
+  debugVisemesKey: 100
+  skipAudioSource: 0
+  gain: 1
+  debugLaughterKey: 104
+  showLaughter: 0
+  laughterScore: 0

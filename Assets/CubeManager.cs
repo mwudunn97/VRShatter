@@ -12,7 +12,7 @@ public class CubeManager : MonoBehaviour
     public GameObject cubePrefab;
 
     bool shouldSpawn = true;
-    float waitTime = 1.0f;
+    float waitTime = 0.3f;
     float zDist = 5.0f;
     int cubeSpread = 40;
     private GameObject[] cubeRow;

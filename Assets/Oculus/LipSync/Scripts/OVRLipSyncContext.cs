@@ -2,18 +2,19 @@
 Filename    :   OVRLipSyncContext.cs
 Content     :   Interface to Oculus Lip-Sync engine
 Created     :   August 6th, 2015
-Copyright   :   Copyright 2015 Oculus VR, Inc. All Rights reserved.
+Copyright   :   Copyright Facebook Technologies, LLC and its affiliates.
+                All rights reserved.
 
-Licensed under the Oculus VR Rift SDK License Version 3.1 (the "License");
-you may not use the Oculus VR Rift SDK except in compliance with the License,
+Licensed under the Oculus Audio SDK License Version 3.3 (the "License");
+you may not use the Oculus Audio SDK except in compliance with the License,
 which is provided at the time of installation or download, or which
 otherwise accompanies this software in either electronic or hard copy form.
 
 You may obtain a copy of the License at
 
-http://www.oculusvr.com/licenses/LICENSE-3.1
+https://developer.oculus.com/licenses/audio-3.3/
 
-Unless required by applicable law or agreed to in writing, the Oculus VR SDK
+Unless required by applicable law or agreed to in writing, the Oculus Audio SDK
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
@@ -51,11 +52,14 @@ public class OVRLipSyncContext : OVRLipSyncContextBase
     public KeyCode debugVisemesKey = KeyCode.D;
     [Tooltip("Skip data from the Audio Source. Use if you intend to pass audio data in manually.")]
     public bool skipAudioSource = false;
-    [Tooltip("Audio gain adjustment")]
+    [Tooltip("Adjust the linear audio gain multiplier before processing lipsync")]
     public float gain = 1.0f;
 
     private bool hasDebugConsole = false;
 
+    public KeyCode debugLaughterKey = KeyCode.H;
+    public bool showLaughter = false;
+    public float laughterScore = 0.0f;
 
     // * * * * * * * * * * * * *
     // Private members
@@ -115,6 +119,31 @@ public class OVRLipSyncContext : OVRLipSyncContextBase
                 Debug.Log("DEBUG SHOW VISEMES: DISABLED");
             }
         }
+        else if (Input.GetKeyDown(debugLaughterKey))
+        {
+            showLaughter = !showLaughter;
+
+            if (showLaughter)
+            {
+                if (hasDebugConsole)
+                {
+                    Debug.Log("DEBUG SHOW LAUGHTER: ENABLED");
+                }
+                else
+                {
+                    Debug.LogWarning("Warning: No OVRLipSyncDebugConsole in the scene!");
+                    showLaughter = false;
+                }
+            }
+            else
+            {
+                if (hasDebugConsole)
+                {
+                    OVRLipSyncDebugConsole.Clear();
+                }
+                Debug.Log("DEBUG SHOW LAUGHTER: DISABLED");
+            }
+        }
         else if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
             gain -= 1.0f;
@@ -157,7 +186,8 @@ public class OVRLipSyncContext : OVRLipSyncContextBase
         {
             HandleKeyboard();
         }
-        DebugShowVisemes();
+        laughterScore = this.Frame.laughterScore;
+        DebugShowVisemesAndLaughter();
     }
 
 
@@ -166,7 +196,7 @@ public class OVRLipSyncContext : OVRLipSyncContextBase
     /// </summary>
     /// <param name="data">Data.</param>
     /// <param name="channels">Channels.</param>
-    void ProcessAudioSamples(float[] data, int channels)
+    public void ProcessAudioSamples(float[] data, int channels)
     {
         // Do not process if we are not initialized, or if there is no
         // audio source attached to game object
@@ -184,7 +214,7 @@ public class OVRLipSyncContext : OVRLipSyncContextBase
             {
 
                 OVRLipSync.Frame frame = this.Frame;
-                OVRLipSync.ProcessFrameInterleaved(Context, data, frame);
+                OVRLipSync.ProcessFrame(Context, data, frame);
             }
         }
 
@@ -210,13 +240,21 @@ public class OVRLipSyncContext : OVRLipSyncContextBase
     }
 
     /// <summary>
-    /// Print the visemes to the game window
+    /// Print the visemes and laughter score to game window
     /// </summary>
-    void DebugShowVisemes()
+    void DebugShowVisemesAndLaughter()
     {
         if (hasDebugConsole)
         {
             string seq = "";
+            if (showLaughter)
+            {
+                seq += "Laughter:";
+                int count = (int)(50.0f * this.Frame.laughterScore);
+                for (int c = 0; c < count; c++)
+                    seq += "*";
+                seq += "\n";
+            }
             if (showVisemes)
             {
                 for (int i = 0; i < this.Frame.Visemes.Length; i++)
