@@ -1,14 +1,19 @@
 ﻿<Properties StartupConfiguration="{DE9721D5-C7DF-78E8-946E-36594EE45AB5}|">
   <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="Unity.Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/PlayerScript.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/CubeManager.cs">
     <Files>
       <File FileName="Assets/Scripts/CameraMovement.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/PlayerScript.cs" Line="11" Column="2" />
+      <File FileName="Assets/Scripts/PlayerScript.cs" Line="52" Column="1" />
+      <File FileName="Assets/CubeScript.cs" Line="57" Column="1" />
+      <File FileName="Assets/CubeManager.cs" Line="104" Column="1" />
+      <File FileName="Assets/Game.cs" Line="36" Column="28" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <Breakpoint file="/Users/MarcWuDunn/shattersquad/Assets/CubeScript.cs" relfile="Assets/CubeScript.cs" line="43" column="1" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MultiItemStartupConfigurations />
