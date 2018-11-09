@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
+using UnityEditor;
 
 public enum CubeType { Red, Blue, Green, Glass };
 public class CubeManager : MonoBehaviour
@@ -10,6 +12,9 @@ public class CubeManager : MonoBehaviour
     public Material green;
     public Material glass;
     public GameObject cubePrefab;
+    public TextAsset textFile;
+    public Game game;
+
 
     bool shouldSpawn = true;
     float waitTime = 1.0f;
@@ -42,10 +47,8 @@ public class CubeManager : MonoBehaviour
         List<GameObject> matchingCubes = FindMatchingCubes(cube);
         if (matchingCubes.Count >= 3 && cube.GetComponent<CubeScript>().type != CubeType.Glass)
         {
-            foreach(GameObject cubeGO in matchingCubes) {
-                AdjustCubeRow(cubeGO);
-            }
-
+            game.AdjustScore(matchingCubes.Count);
+            Debug.Log(game.GetScore());
             while (matchingCubes.Count > 0) {
                 GameObject go = matchingCubes[0];
                 matchingCubes.RemoveAt(0);
@@ -54,16 +57,28 @@ public class CubeManager : MonoBehaviour
         }
     }
 
-    public void AdjustCubeRow(GameObject go) {
-        var location = go.GetComponent<CubeScript>().GetCubeIndex();
-        if (go == cubeRow[location])
-        {
-            GameObject nonmatchingCube = SearchAboveForMismatch(go);
-            if (nonmatchingCube != null) {
-                cubeRow[location] = nonmatchingCube;
-                SetCubeBottomRow(nonmatchingCube, location);
-            }
+    public int GetCubeSpread() {
+        return cubeSpread;
+    }
 
+    public void AdjustCubeRow(GameObject cube) {
+        List<GameObject> matchingCubes = FindMatchingCubes(cube);
+        if (matchingCubes.Count >= 3 && cube.GetComponent<CubeScript>().type != CubeType.Glass)
+        {
+            foreach (GameObject cubeGO in matchingCubes)
+            {
+                var location = cube.GetComponent<CubeScript>().GetCubeIndex();
+                if (cube == cubeRow[location])
+                {
+                    GameObject nonmatchingCube = SearchAboveForMismatch(cube);
+                    if (nonmatchingCube != null)
+                    {
+                        cubeRow[location] = nonmatchingCube;
+                        SetCubeBottomRow(nonmatchingCube, location);
+                    }
+
+                }
+            }
         }
     }
 
@@ -78,6 +93,32 @@ public class CubeManager : MonoBehaviour
         }
 
         return null;
+    }
+
+    public GameObject GetCubeAtIndex(int col, int row)
+    {
+        GameObject cube = cubeRow[col];
+        while (cube != null && row >= 0) {
+            cube = gameObject.GetComponent<CubeScript>().adjacencies[2];
+            row -= 1;
+        }
+        return cube;
+    }
+
+    public int FindCubeIndex(GameObject target)
+    {
+        GameObject cube = cubeRow[target.GetComponent<CubeScript>().GetCubeIndex()];
+        int counter = 0;
+        while (cube != null && cube != target)
+        {
+            CubeScript cubeScript = gameObject.GetComponent<CubeScript>();
+            if (cubeScript == null) {
+                break;
+            }
+            cube = cubeScript.adjacencies[2];
+            counter++;
+        }
+        return counter;
     }
 
     public List<GameObject> FindMatchingCubes(GameObject cube)
@@ -119,7 +160,7 @@ public class CubeManager : MonoBehaviour
     public CubeType ChooseType()
     {
         float fRand = Random.Range(0.0f, 1.0f);
-        if (fRand >= 0.75f)
+        if (fRand >= 0.3f)
         {
             return CubeType.Green;
         }
@@ -127,10 +168,10 @@ public class CubeManager : MonoBehaviour
         //{
         //    return CubeType.Red;
         //}
-        else if (fRand >= 0.5f)
-        {
-            return CubeType.Blue;
-        }
+        //else if (fRand >= 0.001f)
+        //{
+        //    return CubeType.Blue;
+        //}
         else
         {
             return CubeType.Glass;
@@ -172,6 +213,7 @@ public class CubeManager : MonoBehaviour
     {
         var position = cubePrefab.transform.position;
         var rotation = cubePrefab.transform.rotation;
+
         cube.transform.Rotate(0.0f, locationIndex * (360.0f / cubeSpread), 0.0f);
         cube.transform.position = position + cube.transform.forward * zDist;
 
@@ -180,7 +222,7 @@ public class CubeManager : MonoBehaviour
         cube.GetComponent<CubeScript>().SetCubeIndex(locationIndex);
     }
 
-    private void SetCubeBottomRow(GameObject cube, int locationIndex) {
+    public void SetCubeBottomRow(GameObject cube, int locationIndex) {
         if (cubeRow[locationIndex] == null)
         {
             cubeRow[locationIndex] = cube;
@@ -192,6 +234,23 @@ public class CubeManager : MonoBehaviour
             cube.GetComponent<CubeScript>().SetAdjacency(cubeRow[leftIndex], 0);
             cube.GetComponent<CubeScript>().SetAdjacency(cubeRow[rightIndex], 1);
         }
+    }
+
+    public void WriteString(string str)
+    {
+        string path = "Assets/Resources/data.txt";
+
+        //Write some text to the data.txt file
+        StreamWriter writer = new StreamWriter(path, true);
+        writer.WriteLine(str);
+        writer.Close();
+
+        //Re-import the file to update the reference in the editor
+        //AssetDatabase.ImportAsset(path);
+        //TextAsset asset = (TextAsset)Resources.Load("data");
+
+        //Print the text from the file
+        Debug.Log(str);
     }
 
 

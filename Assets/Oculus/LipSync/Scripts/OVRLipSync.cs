@@ -2,18 +2,19 @@
 Filename    :   OVRLipSync.cs
 Content     :   Interface to Oculus Lip Sync engine
 Created     :   August 4th, 2015
-Copyright   :   Copyright 2015 Oculus VR, Inc. All Rights reserved.
+Copyright   :   Copyright Facebook Technologies, LLC and its affiliates.
+                All rights reserved.
 
-Licensed under the Oculus VR Rift SDK License Version 3.1 (the "License");
-you may not use the Oculus VR Rift SDK except in compliance with the License,
+Licensed under the Oculus Audio SDK License Version 3.3 (the "License");
+you may not use the Oculus Audio SDK except in compliance with the License,
 which is provided at the time of installation or download, or which
 otherwise accompanies this software in either electronic or hard copy form.
 
 You may obtain a copy of the License at
 
-http://www.oculusvr.com/licenses/LICENSE-3.1
+https://developer.oculus.com/licenses/audio-3.3/
 
-Unless required by applicable law or agreed to in writing, the Oculus VR SDK
+Unless required by applicable law or agreed to in writing, the Oculus Audio SDK
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
@@ -46,6 +47,19 @@ public class OVRLipSync : MonoBehaviour
         UndefinedFunction = -2206   //< An undefined function
     };
 
+    // Audio buffer data type
+    public enum AudioDataType
+    {
+        // Signed 16-bit integer mono audio stream
+        S16_Mono,
+        // Signed 16-bit integer stereo audio stream
+        S16_Stereo,
+        // Signed 32-bit float mono data type
+        F32_Mono,
+        // Signed 32-bit float stereo data type
+        F32_Stereo
+    };
+
     // Various visemes
     public enum Viseme
     {
@@ -74,7 +88,8 @@ public class OVRLipSync : MonoBehaviour
         VisemeOn,
         VisemeOff,
         VisemeAmount,
-        VisemeSmoothing
+        VisemeSmoothing,
+        LaughterAmount
     };
 
     public static readonly int SignalCount = Enum.GetNames(typeof(Signals)).Length;
@@ -84,6 +99,7 @@ public class OVRLipSync : MonoBehaviour
     {
         Original,
         Enhanced,
+        Enhanced_with_Laughter,
     };
 
     /// NOTE: Opaque typedef for lip-sync context is an unsigned int (uint)
@@ -97,11 +113,21 @@ public class OVRLipSync : MonoBehaviour
             frameNumber = input.frameNumber;
             frameDelay = input.frameDelay;
             input.Visemes.CopyTo(Visemes, 0);
+            laughterScore = input.laughterScore;
+        }
+
+        public void Reset()
+        {
+            frameNumber = 0;
+            frameDelay = 0;
+            Array.Clear(Visemes, 0, VisemeCount);
+            laughterScore = 0;
         }
 
         public int frameNumber;    // count from start of recognition
         public int frameDelay;     // in ms
         public float[] Visemes = new float[VisemeCount];       // Array of floats for viseme frame. Size of Viseme Count, above
+        public float laughterScore; // probability of laughter presence.
     };
 
     // * * * * * * * * * * * * *
@@ -116,8 +142,10 @@ public class OVRLipSync : MonoBehaviour
                                                           ref int Minor,
                                                           ref int Patch);
     [DllImport(strOVRLS)]
-    private static extern int ovrLipSyncDll_CreateContext(ref uint context,
-                                                           ContextProviders provider);
+    private static extern int ovrLipSyncDll_CreateContextEx(ref uint context,
+                                                           ContextProviders provider,
+                                                           int sampleRate,
+                                                           bool enableAcceleration);
     [DllImport(strOVRLS)]
     private static extern int ovrLipSyncDll_DestroyContext(uint context);
 
@@ -146,6 +174,19 @@ public class OVRLipSync : MonoBehaviour
         float[] visemes,
         int visemeCount);
 
+    [DllImport(strOVRLS)]
+    private static extern int ovrLipSyncDll_ProcessFrameEx(
+        uint context,
+        float[] audioBuffer,
+        uint bufferSize,
+        AudioDataType dataType,
+        ref int frameNumber,
+        ref int frameDelay,
+        float[] visemes,
+        int visemeCount,
+        ref float laughterScore,
+        float[] laughterCategories,
+        int laughterCategoriesLength);
 
     // * * * * * * * * * * * * *
     // Public members
@@ -264,12 +305,17 @@ public class OVRLipSync : MonoBehaviour
     /// <returns>error code</returns>
     /// <param name="context">Context.</param>
     /// <param name="provider">Provider.</param>
-    public static Result CreateContext(ref uint context, ContextProviders provider)
+    /// <param name="enableAcceleration">Enable DSP Acceleration.</param>
+    public static Result CreateContext(
+        ref uint context,
+        ContextProviders provider,
+        int sampleRate = 0,
+        bool enableAcceleration = false)
     {
         if (IsInitialized() != Result.Success && Initialize() != Result.Success)
             return Result.CannotCreateContext;
 
-        return (Result)ovrLipSyncDll_CreateContext(ref context, provider);
+        return (Result)ovrLipSyncDll_CreateContextEx(ref context, provider, sampleRate, enableAcceleration);
     }
 
     /// <summary>
@@ -314,40 +360,18 @@ public class OVRLipSync : MonoBehaviour
         return (Result)ovrLipSyncDll_SendSignal(context, signal, arg1, arg2);
     }
 
-    /// <summary>
-    /// Processes the frame.
-    /// </summary>
-    /// <returns>error code</returns>
-    /// <param name="context">Context.</param>
-    /// <param name="monoBuffer">Mono buffer.</param>
-    /// <param name="frame">Frame.</param>
-    public static Result ProcessFrame(uint context, float[] audioBuffer, Frame frame)
+    public static Result ProcessFrame(
+        uint context, float[] audioBuffer, Frame frame, AudioDataType dataType = AudioDataType.F32_Stereo)
     {
         if (IsInitialized() != Result.Success)
             return Result.Unknown;
 
-        // We need to pass the array of Visemes directly into the C call (no pointers of structs allowed, sadly)
-        return (Result)ovrLipSyncDll_ProcessFrame(context, audioBuffer,
+        return (Result)ovrLipSyncDll_ProcessFrameEx(context, audioBuffer, 0, dataType,
                                           ref frame.frameNumber, ref frame.frameDelay,
-                                          frame.Visemes, frame.Visemes.Length);
+                                          frame.Visemes, frame.Visemes.Length,
+                                          ref frame.laughterScore,
+                                          null, 0
+                                          );
+
     }
-
-    /// <summary>
-    /// Processes the frame interleaved.
-    /// </summary>
-    /// <returns>The frame interleaved.</returns>
-    /// <param name="context">Context.</param>
-    /// <param name="audioBuffer">Audio buffer.</param>
-    /// <param name="frame">Frame.</param>
-    public static Result ProcessFrameInterleaved(uint context, float[] audioBuffer, Frame frame)
-    {
-        if (IsInitialized() != Result.Success)
-            return Result.Unknown;
-
-        // We need to pass the array of Visemes directly into the C call (no pointers of structs allowed, sadly)
-        return (Result)ovrLipSyncDll_ProcessFrameInterleaved(context, audioBuffer,
-                                          ref frame.frameNumber, ref frame.frameDelay,
-                                          frame.Visemes, frame.Visemes.Length);
-    }
-
 }

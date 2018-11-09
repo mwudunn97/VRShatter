@@ -6,6 +6,7 @@ public class Game : MonoBehaviour {
 
     public static Game instance = null;
     private CubeManager cubeManager;
+    public int totalScore;
     //Awake is always called before any Start functions
     void Awake()
     {
@@ -35,4 +36,12 @@ public class Game : MonoBehaviour {
     public CubeManager GetCubeManager() {
         return cubeManager;
     } 
+
+    public void AdjustScore(int score) {
+        totalScore += score;
+    }
+
+    public int GetScore() {
+        return totalScore;
+    }
 }

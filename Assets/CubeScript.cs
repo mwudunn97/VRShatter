@@ -1,8 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.IO;
-using UnityEditor;
+
 
 public class CubeScript : MonoBehaviour {
     public CubeType type;
@@ -10,8 +9,10 @@ public class CubeScript : MonoBehaviour {
     public GameObject[] adjacencies = new GameObject[4];
     public CubeManager cubeManager;
     private int cubeIndex;
+    public Matrix4x4 transformationMat;
+    public bool destroyable = false;
+    private GameObject lastCollidedWith = null;
 
-    public TextAsset textFile;
 
 	public void SetType(CubeType cubeType)
 	{
@@ -38,33 +39,90 @@ public class CubeScript : MonoBehaviour {
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.tag == "Projectile" && type == CubeType.Glass) {
-            
-            cubeManager.AdjustCubeRow(gameObject);
-            Destroy(gameObject);
+        if (collision.gameObject == lastCollidedWith) {
+            return;
         }
-        else if (collision.gameObject.tag == "Box" && type != CubeType.Glass) {
-            
-            var coType = collision.gameObject.GetComponent<CubeScript>().type;
-            //Compare Y locations to determine top or bot
-            if (IsCubeBelow(gameObject, collision.gameObject)) {
-                SetAdjacency(collision.gameObject, 2);
+        lastCollidedWith = collision.gameObject;
+
+        if (collision.gameObject.tag == "Projectile")
+        {
+            if (type == CubeType.Glass)
+            {
+                Vector3 collPos = collision.gameObject.transform.position + gameObject.transform.forward.normalized *
+                                       collision.gameObject.GetComponent<SphereCollider>().radius;
+                Vector3 localCollPos = transform.InverseTransformPoint(collPos);
+                Vector2 projectedPos = new Vector2(localCollPos.x, localCollPos.y);
+                cubeManager.WriteString(projectedPos.ToString());
+                cubeManager.AdjustCubeRow(gameObject);
+                setNeighborsDestroyable();
+                Destroy(gameObject);
             } else {
+                SetType(GetNextType());
+            }
+        }
+        else if (collision.gameObject.tag == "Box")
+        {
+            if (IsCubeBelow(gameObject, collision.gameObject))
+            {
+                SetAdjacency(collision.gameObject, 2);
+            }
+            else
+            {
                 SetAdjacency(collision.gameObject, 3);
                 SetLeftRightAdjacencies();
             }
-            cubeManager.HandleCubeCollision(gameObject);
+
+
+            cubeManager.AdjustCubeRow(gameObject);
+
+            if (type != CubeType.Glass && destroyable)
+            {
+                cubeManager.HandleCubeCollision(gameObject);
+            }
+            destroyable = false;
+           
         } else {
-            cubeManager.HandleCubeCollision(gameObject);
+            cubeManager.SetCubeBottomRow(gameObject, cubeIndex);
+            cubeManager.AdjustCubeRow(gameObject);
+
+            if (type != CubeType.Glass && destroyable)
+            {
+                cubeManager.HandleCubeCollision(gameObject);
+            }
+            destroyable = false;
+
         }
     }
 
+    public void setNeighborsDestroyable() {
+        int rowIndex = cubeManager.FindCubeIndex(gameObject);
+        if (adjacencies[2] != null) {
+            adjacencies[2].GetComponent<CubeScript>().destroyable = true;
+        }
+
+    }
+
+    //If first cube is below the second cube, return true
     public bool IsCubeBelow(GameObject cube, GameObject otherCube) {
         if (cube.transform.position.y < otherCube.transform.position.y) {
             return true;
         }
 
         return false;
+    }
+
+    private CubeType GetNextType() {
+        switch (type)
+        {
+            case CubeType.Blue:
+                return CubeType.Red;
+            case CubeType.Red:
+                return CubeType.Green;
+            case CubeType.Green:
+                return CubeType.Blue;
+            default:
+                return type;
+        }
     }
 
     public void SetLeftRightAdjacencies() {
@@ -110,20 +168,5 @@ public class CubeScript : MonoBehaviour {
         go.GetComponent<CubeScript>().adjacencies[otherIndex] = gameObject;
     }
 
-    static void WriteString(string str)
-    {
-        string path = "Assets/Resources/data.txt";
 
-        //Write some text to the data.txt file
-        StreamWriter writer = new StreamWriter(path, true);
-        writer.WriteLine(str);
-        writer.Close();
-
-        //Re-import the file to update the reference in the editor
-        AssetDatabase.ImportAsset(path);
-        TextAsset asset = (TextAsset) Resources.Load("data");
-
-        //Print the text from the file
-        Debug.Log(asset.text);
-    }
 }

@@ -119,6 +119,12 @@ public class OVROverlay : MonoBehaviour
 	public int compositionDepth = 0;
 
 	/// <summary>
+	/// The noDepthBufferTesting will stop layer's depth buffer compositing even if the engine has "Depth buffer sharing" enabled on Rift.
+	/// </summary>
+	[Tooltip("The noDepthBufferTesting will stop layer's depth buffer compositing even if the engine has \"Shared Depth Buffer\" enabled")]
+	public bool noDepthBufferTesting = false;
+
+	/// <summary>
 	/// Specify overlay's shape
 	/// </summary>
 	[Tooltip("Specify overlay's shape")]
@@ -364,7 +370,7 @@ public class OVROverlay : MonoBehaviour
 		if (layerIndex != -1)
 		{
 			// Turn off the overlay if it was on.
-			OVRPlugin.EnqueueSubmitLayer(true, false, IntPtr.Zero, IntPtr.Zero, -1, 0, OVRPose.identity.ToPosef(), Vector3.one.ToVector3f(), layerIndex, (OVRPlugin.OverlayShape)prevOverlayShape);
+			OVRPlugin.EnqueueSubmitLayer(true, false, false, IntPtr.Zero, IntPtr.Zero, -1, 0, OVRPose.identity.ToPosef(), Vector3.one.ToVector3f(), layerIndex, (OVRPlugin.OverlayShape)prevOverlayShape);
 			instances[layerIndex] = null;
 			layerIndex = -1;
 		}
@@ -598,10 +604,10 @@ public class OVROverlay : MonoBehaviour
 		return ret;
 	}
 
-	private bool SubmitLayer(bool overlay, bool headLocked, OVRPose pose, Vector3 scale, int frameIndex)
+	private bool SubmitLayer(bool overlay, bool headLocked, bool noDepthBufferTesting, OVRPose pose, Vector3 scale, int frameIndex)
 	{
 		int rightEyeIndex = (texturesPerStage >= 2) ? 1 : 0;
-		bool isOverlayVisible = OVRPlugin.EnqueueSubmitLayer(overlay, headLocked, 
+		bool isOverlayVisible = OVRPlugin.EnqueueSubmitLayer(overlay, headLocked, noDepthBufferTesting, 
 			isExternalSurface ? System.IntPtr.Zero : layerTextures[0].appTexturePtr,
 			isExternalSurface ? System.IntPtr.Zero : layerTextures[rightEyeIndex].appTexturePtr, 
 			layerId, frameIndex, pose.flipZ().ToPosef(), scale.ToVector3f(), layerIndex, (OVRPlugin.OverlayShape)currentOverlayShape);
@@ -746,7 +752,7 @@ public class OVROverlay : MonoBehaviour
 				return;
 		}
 
-		bool isOverlayVisible = SubmitLayer(overlay, headLocked, pose, scale, frameIndex);
+		bool isOverlayVisible = SubmitLayer(overlay, headLocked, noDepthBufferTesting, pose, scale, frameIndex);
 
 		prevFrameIndex = frameIndex;
 		if (isDynamic)

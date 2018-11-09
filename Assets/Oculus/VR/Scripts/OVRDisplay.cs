@@ -36,6 +36,7 @@ using Node = UnityEngine.VR.VRNode;
 using NodeState = UnityEngine.VR.VRNodeState;
 using Settings = UnityEngine.VR.VRSettings;
 #else
+using Node = UnityEngine.VR.VRNode;
 using Settings = UnityEngine.VR.VRSettings;
 #endif
 
@@ -162,80 +163,6 @@ public class OVRDisplay
 #endif
 	}
 
-	//4 types of node state properties that can be queried with UnityEngine.XR
-	public enum NodeStatePropertyType
-	{
-		Acceleration,
-		AngularAcceleration	,
-		Velocity,
-		AngularVelocity,
-	}
-
-#if UNITY_2017_1_OR_NEWER
-	public Vector3 GetNodeStateProperty(Node nodeType, NodeStatePropertyType propertyType)
-	{
-		List<NodeState> nodeStateList = new List<NodeState>();
-		InputTracking.GetNodeStates(nodeStateList);
-
-		if (nodeStateList.Count == 0)
-			return Vector3.zero;
-
-		bool nodeStateFound = false;
-		NodeState requestedNodeState = nodeStateList[0];
-
-		for (int i = 0; i < nodeStateList.Count; i++)
-		{
-			if (nodeStateList[i].nodeType == nodeType)
-			{
-				requestedNodeState = nodeStateList[i];
-				nodeStateFound = true;
-				break;
-			}
-		}
-
-		if (!nodeStateFound)
-			return Vector3.zero;
-
-		Vector3 retVec;
-		if (propertyType == NodeStatePropertyType.Acceleration)
-		{
-			if (requestedNodeState.TryGetAcceleration(out retVec))
-			{
-				return retVec;
-			}
-		}
-		else if (propertyType == NodeStatePropertyType.AngularAcceleration)
-		{
-#if UNITY_2017_2_OR_NEWER
-			if (requestedNodeState.TryGetAngularAcceleration(out retVec))
-			{
-				retVec = retVec * Mathf.Rad2Deg;
-				return retVec;
-			}
-#endif
-		}
-		else if (propertyType == NodeStatePropertyType.Velocity)
-		{
-			if (requestedNodeState.TryGetVelocity(out retVec))
-			{
-				return retVec;
-			}
-		}
-		else if (propertyType == NodeStatePropertyType.AngularVelocity)
-		{
-#if UNITY_2017_2_OR_NEWER
-			if (requestedNodeState.TryGetAngularVelocity(out retVec))
-			{
-				retVec = retVec * Mathf.Rad2Deg;
-				return retVec;
-			}
-#endif
-		}
-
-		return Vector3.zero;
-	}
-#endif
-
 	/// <summary>
 	/// Gets the current linear acceleration of the head.
 	/// </summary>
@@ -245,11 +172,7 @@ public class OVRDisplay
 			if (!OVRManager.isHmdPresent)
 				return Vector3.zero;
 
-#if UNITY_2017_1_OR_NEWER
-			return GetNodeStateProperty(Node.Head, NodeStatePropertyType.Acceleration);
-#else
-			return OVRPlugin.GetNodeAcceleration(OVRPlugin.Node.Head, OVRPlugin.Step.Render).FromFlippedZVector3f();
-#endif
+			return OVRNodeStateProperties.GetNodeStateProperty(Node.Head, NodeStatePropertyType.Acceleration, OVRPlugin.Node.Head, OVRPlugin.Step.Render);
 
 		}
 	}
@@ -264,11 +187,7 @@ public class OVRDisplay
             if (!OVRManager.isHmdPresent)
 				return Vector3.zero;
 
-#if UNITY_2017_2_OR_NEWER
-			return GetNodeStateProperty(Node.Head, NodeStatePropertyType.AngularAcceleration);
-#else
-			return OVRPlugin.GetNodeAngularAcceleration(OVRPlugin.Node.Head, OVRPlugin.Step.Render).FromFlippedZVector3f() * Mathf.Rad2Deg;
-#endif
+			return OVRNodeStateProperties.GetNodeStateProperty(Node.Head, NodeStatePropertyType.AngularAcceleration, OVRPlugin.Node.Head, OVRPlugin.Step.Render);
 
         }
     }
@@ -283,11 +202,7 @@ public class OVRDisplay
             if (!OVRManager.isHmdPresent)
                 return Vector3.zero;
 
-#if UNITY_2017_1_OR_NEWER
-			return GetNodeStateProperty(Node.Head, NodeStatePropertyType.Velocity);
-#else
-			return OVRPlugin.GetNodeVelocity(OVRPlugin.Node.Head, OVRPlugin.Step.Render).FromFlippedZVector3f();
-#endif
+			return OVRNodeStateProperties.GetNodeStateProperty(Node.Head, NodeStatePropertyType.Velocity, OVRPlugin.Node.Head, OVRPlugin.Step.Render);
 
         }
     }
@@ -301,11 +216,7 @@ public class OVRDisplay
 			if (!OVRManager.isHmdPresent)
 				return Vector3.zero;
 
-#if UNITY_2017_2_OR_NEWER
-			return GetNodeStateProperty(Node.Head, NodeStatePropertyType.AngularVelocity);
-#else
-			return OVRPlugin.GetNodeAngularVelocity(OVRPlugin.Node.Head, OVRPlugin.Step.Render).FromFlippedZVector3f() * Mathf.Rad2Deg;
-#endif
+			return OVRNodeStateProperties.GetNodeStateProperty(Node.Head, NodeStatePropertyType.AngularVelocity, OVRPlugin.Node.Head, OVRPlugin.Step.Render);
 
 		}
 	}
