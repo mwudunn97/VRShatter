@@ -218,6 +218,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 447dd210bcf024fc1b28b5c1478493a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  totalScore: 0
 --- !u!4 &310799019
 Transform:
   m_ObjectHideFlags: 0
@@ -607,6 +608,8 @@ MonoBehaviour:
   green: {fileID: 2100000, guid: acec964c79a7c4a61a6dcac9adff5d00, type: 2}
   glass: {fileID: 2100000, guid: b43e831b217224f36b94c62dcf1befc6, type: 2}
   cubePrefab: {fileID: 1263940363275348, guid: 3933e520a3ad743e380cd9c6924d2090, type: 2}
+  textFile: {fileID: 4900000, guid: 82f432b6d9102495399add77efc385dd, type: 3}
+  game: {fileID: 310799018}
 --- !u!4 &1801646912
 Transform:
   m_ObjectHideFlags: 0
