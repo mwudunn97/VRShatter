@@ -20,6 +20,7 @@ public class CubeManager : MonoBehaviour
     float waitTime = 0.3f;
     float zDist = 5.0f;
     int cubeSpread = 40;
+    int cubeProbabilitySeed = 0;
     private GameObject[] cubeRow;
 
     private void Start()
@@ -157,21 +158,50 @@ public class CubeManager : MonoBehaviour
         }
     }
 
-    public CubeType ChooseType()
+    public CubeType ChooseType() {
+        cubeProbabilitySeed = (cubeProbabilitySeed + 1) % 10;
+        switch(cubeProbabilitySeed) 
+        {
+            case 0:
+                return SelectCube(0.1f, 0.1f, 0.1f);
+            case 1:
+                return SelectCube(0.1f, 0.1f, 0.1f);
+            case 2:
+                return SelectCube(0.2f, 0.2f, 0.2f);
+            case 3:
+                return SelectCube(0.2f, 0.2f, 0.2f);
+            case 4:
+                return SelectCube(0.2f, 0.2f, 0.2f);
+            case 5:
+                return SelectCube(0.25f, 0.25f, 0.25f);
+            case 6:
+                return SelectCube(0.25f, 0.25f, 0.25f);
+            case 7:
+                return SelectCube(0.3f, 0.3f, 0.3f);
+            case 8:
+                return SelectCube(0.4f, 0.3f, 0.3f);
+            case 9:
+                return SelectCube(0.3f, 0.4f, 0.3f);
+            default:
+                return SelectCube(0.0f, 0.0f, 0.0f);
+        }  
+    }
+
+    private CubeType SelectCube(float pGreen, float pRed, float pBlue)
     {
         float fRand = Random.Range(0.0f, 1.0f);
-        if (fRand >= 0.3f)
+        if (fRand >= 1.0f - pGreen)
         {
             return CubeType.Green;
         }
-        //else if (fRand >= 0.7f)
-        //{
-        //    return CubeType.Red;
-        //}
-        //else if (fRand >= 0.001f)
-        //{
-        //    return CubeType.Blue;
-        //}
+        else if (fRand >= 1.0f - pGreen - pRed)
+        {
+            return CubeType.Red;
+        }
+        else if (fRand >= 1.0f - pGreen - pRed - pBlue)
+        {
+            return CubeType.Blue;
+        }
         else
         {
             return CubeType.Glass;
