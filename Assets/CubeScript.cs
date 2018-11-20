@@ -51,8 +51,8 @@ public class CubeScript : MonoBehaviour {
                 Vector3 collPos = collision.gameObject.transform.position + gameObject.transform.forward.normalized *
                                        collision.gameObject.GetComponent<SphereCollider>().radius;
                 Vector3 localCollPos = transform.InverseTransformPoint(collPos);
-                float x_pos = Mathf.Min(Mathf.Max(localCollPos.x, -0.5f), 0.5f);
-                float y_pos = Mathf.Min(Mathf.Max(localCollPos.y, -0.5f), 0.5f);
+                float x_pos = Mathf.Min(Mathf.Max(localCollPos.x, -0.8f), 0.8f);
+                float y_pos = Mathf.Min(Mathf.Max(localCollPos.y, -0.8f), 0.8f);
                 Vector2 projectedPos = new Vector2(x_pos, y_pos);
                 cubeManager.WriteString(projectedPos.ToString("F4"));
                 cubeManager.AdjustCubeRow(gameObject);

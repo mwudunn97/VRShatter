@@ -17,9 +17,9 @@ public class CubeManager : MonoBehaviour
 
 
     bool shouldSpawn = true;
-    float waitTime = 0.3f;
+    float gameSpeed = 15.0f;
     float zDist = 5.0f;
-    int cubeSpread = 40;
+    int cubeSpread = 27;
     int cubeProbabilitySeed = 0;
     private GameObject[] cubeRow;
 
@@ -213,7 +213,7 @@ public class CubeManager : MonoBehaviour
         var cube = (GameObject)Instantiate(
             cubePrefab);
         cube.GetComponent<CubeScript>().cubeManager = this;
-        int index = Random.Range(0, cubeSpread);
+        int index = Random.Range((int) cubeSpread / 2 - 1, cubeSpread - 1);
         CubeType nextType = ChooseType();
         cube.GetComponent<CubeScript>().SetType(nextType);
 
@@ -235,7 +235,7 @@ public class CubeManager : MonoBehaviour
 
     IEnumerator wait()
     {
-        yield return new WaitForSeconds(waitTime);
+        yield return new WaitForSeconds(1 / (gameSpeed / 10 ));
         shouldSpawn = true;
     }
 
