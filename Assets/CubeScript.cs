@@ -244,7 +244,7 @@ public class CubeScript : MonoBehaviour {
     public IEnumerator Fade() {
         Renderer renderer = this.gameObject.GetComponent<Renderer>();
         int passes = 0;
-        int totalPasses = 20;
+        int totalPasses = 15;
         float origAlpha = renderer.material.color.a;
         while (passes < totalPasses)
         {
