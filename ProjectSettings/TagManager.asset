@@ -8,6 +8,7 @@ TagManager:
   - Box
   - ShatterEffect
   - Ground
+  - Trigger
   layers:
   - Default
   - TransparentFX
