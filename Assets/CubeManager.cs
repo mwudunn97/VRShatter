@@ -11,13 +11,16 @@ public class CubeManager : MonoBehaviour
     public Material red;
     public Material green;
     public Material glass;
+    public Material transparent;
     public GameObject cubePrefab;
+    public GameObject glassCubePrefab;
     public TextAsset textFile;
     public Game game;
+    public GameObject[] ShatterCacheObjs;
 
 
     bool shouldSpawn = true;
-    float gameSpeed = 15.0f;
+    float gameSpeed = 12.0f;
     float zDist = 5.0f;
     int cubeSpread = 27;
     int cubeProbabilitySeed = 0;
@@ -39,7 +42,7 @@ public class CubeManager : MonoBehaviour
             case CubeType.Green:
                 return green;
             default:
-                return glass;
+                return transparent;
         }
     }
 
@@ -210,13 +213,19 @@ public class CubeManager : MonoBehaviour
 
     public void Spawn()
     {
-        var cube = (GameObject)Instantiate(
-            cubePrefab);
+        CubeType nextType = ChooseType();
+        GameObject cube;
+        
+        if (nextType == CubeType.Glass) {
+            cube = (GameObject)Instantiate(
+                glassCubePrefab);
+        } else {
+            cube = (GameObject)Instantiate(
+                cubePrefab);
+        }
         cube.GetComponent<CubeScript>().cubeManager = this;
         int index = Random.Range((int) cubeSpread / 2 - 1, cubeSpread - 1);
-        CubeType nextType = ChooseType();
         cube.GetComponent<CubeScript>().SetType(nextType);
-
         placeCube(cube, index);
 
     }
@@ -241,8 +250,8 @@ public class CubeManager : MonoBehaviour
 
     private void placeCube(GameObject cube, int locationIndex)
     {
-        var position = cubePrefab.transform.position;
-        var rotation = cubePrefab.transform.rotation;
+        var position = cube.transform.position;
+        var rotation = cube.transform.rotation;
 
         cube.transform.Rotate(0.0f, locationIndex * (360.0f / cubeSpread), 0.0f);
         cube.transform.position = position + cube.transform.forward * zDist;

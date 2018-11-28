@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Projectile
   - Box
+  - ShatterEffect
+  - Ground
   layers:
   - Default
   - TransparentFX
@@ -16,9 +18,9 @@ TagManager:
   - 
   - 
   - PostProcessing
-  - 
-  - 
-  - 
+  - RegularCube
+  - GlassCube
+  - Projectile
   - 
   - 
   - 
