@@ -13,7 +13,6 @@ public class PlayerScript : MonoBehaviour {
 	void Update () {
         bool is_pressed = false;
         is_pressed = OVRInput.Get(OVRInput.Button.One) || Input.GetMouseButtonDown(0);
-
         if (is_pressed && !reload) {
             Fire();
             reload = true;

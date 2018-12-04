@@ -224,7 +224,7 @@ public class CubeManager : MonoBehaviour
                 cubePrefab);
         }
         cube.GetComponent<CubeScript>().cubeManager = this;
-        int index = Random.Range((int) cubeSpread / 2 - 1, cubeSpread - 1);
+        int index = Random.Range(0, (int)cubeSpread / 2 - 1);
         cube.GetComponent<CubeScript>().SetType(nextType);
         placeCube(cube, index);
 
