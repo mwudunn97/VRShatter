@@ -67,19 +67,6 @@ public class CubeManager : MonoBehaviour
         return cubeSpread;
     }
 
-    public GameObject SearchAboveForMismatch(GameObject go) {
-        var originalType = go.GetComponent<CubeScript>().type;
-        CubeScript nextCube = go.GetComponent<CubeScript>();
-        while (nextCube.adjacencies[2] != null) {
-            if (nextCube.type != originalType || nextCube.type == CubeType.Glass) {
-                return nextCube.gameObject;
-            }
-            nextCube = nextCube.adjacencies[2].GetComponent<CubeScript>();
-        }
-
-        return null;
-    }
-
     public GameObject GetCubeAtIndex(int col, int row)
     {
         if (col >= cubeSpread) col = col % cubeSpread;
@@ -254,34 +241,8 @@ public class CubeManager : MonoBehaviour
 
     public void SetCubeBottomRow(GameObject cube, int locationIndex) {
         cubeRow[locationIndex] = cube;
-        //var leftIndex = (locationIndex + cubeSpread - 1) % cubeSpread;
-        //var rightIndex = (locationIndex + 1) % cubeSpread;
-
-        //cube.GetComponent<CubeScript>().SetAdjacency(cubeRow[leftIndex], 0);
-        //cube.GetComponent<CubeScript>().SetAdjacency(cubeRow[rightIndex], 1);
     }
 
-    //public void AdjustCubeRow(GameObject cube)
-    //{
-    //    List<GameObject> matchingCubes = FindMatchingCubes(cube);
-    //    if (matchingCubes.Count >= 3 && cube.GetComponent<CubeScript>().type != CubeType.Glass)
-    //    {
-    //        foreach (GameObject cubeGO in matchingCubes)
-    //        {
-    //            var location = cube.GetComponent<CubeScript>().GetCubeIndex();
-    //            if (cube == cubeRow[location])
-    //            {
-    //                GameObject nonmatchingCube = SearchAboveForMismatch(cube);
-    //                if (nonmatchingCube != null)
-    //                {
-    //                    cubeRow[location] = nonmatchingCube;
-    //                    SetCubeBottomRow(nonmatchingCube, location);
-    //                }
-
-    //            }
-    //        }
-    //    }
-    //}
 
     public GameObject GetCubeButtomRow(int locationIndex) {
         return cubeRow[locationIndex];

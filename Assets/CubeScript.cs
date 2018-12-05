@@ -90,8 +90,9 @@ public class CubeScript : MonoBehaviour {
             else
             {
                 SetAdjacency(collision.gameObject, 3);
-                SetLeftRightAdjacencies();
                 cubeRowIndex = collision.gameObject.GetComponent<CubeScript>().cubeRowIndex + 1;
+                SetLeftRightAdjacencies();
+
                 if (type != CubeType.Glass && destroyable)
                 {
                     cubeManager.HandleCubeCollision(gameObject);
@@ -99,7 +100,6 @@ public class CubeScript : MonoBehaviour {
                 destroyable = false;
             }
 
-            //cubeManager.AdjustCubeRow(gameObject);
 
 
            
@@ -109,7 +109,6 @@ public class CubeScript : MonoBehaviour {
             PropagateRowIndex();
             SetLeftRightAdjacencies();
 
-            //cubeManager.AdjustCubeRow(gameObject);
 
             if (type != CubeType.Glass && destroyable)
             {
@@ -290,7 +289,6 @@ public class CubeScript : MonoBehaviour {
             yield return new WaitForSeconds(0.01f);
         }
 
-        //cubeManager.AdjustCubeRow(gameObject);
         if (type == CubeType.Glass) {
             setNeighborsDestroyable();
         }
