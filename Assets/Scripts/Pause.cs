@@ -11,7 +11,7 @@ public class Pause : MonoBehaviour
     }
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) || OVRInput.Get(OVRInput.Button.Two))
         {
             if (!pausePanel.activeInHierarchy)
             {
