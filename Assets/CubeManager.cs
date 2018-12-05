@@ -87,8 +87,14 @@ public class CubeManager : MonoBehaviour
 
         GameObject cube = cubeRow[col];
         while (cube != null && row > 0) {
-            cube = gameObject.GetComponent<CubeScript>().adjacencies[2];
-            row -= 1;
+            CubeScript cs = gameObject.GetComponent<CubeScript>();
+            if (cs != null) {
+                cube = cs.adjacencies[2];
+                row -= 1;
+            } else {
+                return null;
+            }
+
         }
         return cube;
     }
