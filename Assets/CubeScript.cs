@@ -85,7 +85,6 @@ public class CubeScript : MonoBehaviour {
             {
                 SetAdjacency(collision.gameObject, 2);
                 PropagateRowIndex();
-
             }
             else
             {
@@ -119,11 +118,11 @@ public class CubeScript : MonoBehaviour {
         }
     }
 
-    public void setAboveDestroyable() {
+    public void SetAboveDestroyable() {
         if (adjacencies[2] != null) {
             CubeScript cubeScript = adjacencies[2].GetComponent<CubeScript>();
             cubeScript.destroyable = true;
-            cubeScript.setAboveDestroyable();
+            cubeScript.SetAboveDestroyable();
         }
 
     }
@@ -291,9 +290,10 @@ public class CubeScript : MonoBehaviour {
             yield return new WaitForSeconds(0.01f);
         }
 
-        if (type == CubeType.Glass) {
-            setAboveDestroyable();
-        }
+        //if (type == CubeType.Glass) {
+        //    SetAboveDestroyable();
+        //}
+        SetAboveDestroyable();
         Destroy(gameObject);
         Destroy(this.gameObject);
 
