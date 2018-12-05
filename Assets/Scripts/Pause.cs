@@ -9,7 +9,7 @@ public class Pause : MonoBehaviour
     private bool wait = false;
     void Start()
     {
-        pausePanel.SetActive(false);
+        pausePanel.SetActive(true);
     }
     void Update()
     {
