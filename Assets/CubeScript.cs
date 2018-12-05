@@ -106,8 +106,8 @@ public class CubeScript : MonoBehaviour {
         } else if (collision.gameObject.tag == "Ground"){
             cubeManager.SetCubeBottomRow(gameObject, cubeColIndex);
             cubeRowIndex = 0;
-            PropagateRowIndex();
             SetLeftRightAdjacencies();
+            PropagateRowIndex();
 
 
             if (type != CubeType.Glass && destroyable)
@@ -119,9 +119,11 @@ public class CubeScript : MonoBehaviour {
         }
     }
 
-    public void setNeighborsDestroyable() {
+    public void setAboveDestroyable() {
         if (adjacencies[2] != null) {
-            adjacencies[2].GetComponent<CubeScript>().destroyable = true;
+            CubeScript cubeScript = adjacencies[2].GetComponent<CubeScript>();
+            cubeScript.destroyable = true;
+            cubeScript.setAboveDestroyable();
         }
 
     }
@@ -290,7 +292,7 @@ public class CubeScript : MonoBehaviour {
         }
 
         if (type == CubeType.Glass) {
-            setNeighborsDestroyable();
+            setAboveDestroyable();
         }
         Destroy(gameObject);
         Destroy(this.gameObject);
