@@ -48,8 +48,8 @@ public class CubeManager : MonoBehaviour
 
     public void HandleCubeCollision(GameObject cube)
     {
-        Debug.Log("Cube Collision Processing...");
         List<GameObject> matchingCubes = FindMatchingCubes(cube);
+        Debug.Log("Cube Count Found:...");
         if (matchingCubes.Count >= 3)
         {
             game.AdjustScore(matchingCubes.Count);
@@ -294,7 +294,7 @@ public class CubeManager : MonoBehaviour
         //TextAsset asset = (TextAsset)Resources.Load("data");
 
         //Print the text from the file
-        Debug.Log(str);
+        //Debug.Log(str);
     }
 
 

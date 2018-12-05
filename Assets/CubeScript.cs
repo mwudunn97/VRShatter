@@ -9,7 +9,8 @@ public class CubeScript : MonoBehaviour {
     private Material material;
     public GameObject[] adjacencies = new GameObject[4];
     public CubeManager cubeManager;
-    private int cubeIndex;
+    private int cubeColIndex;
+    private int cubeRowIndex;
     public Matrix4x4 transformationMat;
     public bool destroyable = false;
     private GameObject lastCollidedWith = null;
@@ -41,12 +42,12 @@ public class CubeScript : MonoBehaviour {
 	}
 
     public void SetCubeIndex(int index) {
-        this.cubeIndex = index;
+        this.cubeColIndex = index;
     }
 
     public int GetCubeIndex()
     {
-        return this.cubeIndex;
+        return this.cubeColIndex;
     }
 
 	public void ShatterCube(Collider other)
@@ -83,11 +84,13 @@ public class CubeScript : MonoBehaviour {
             if (IsCubeBelow(gameObject, collision.gameObject))
             {
                 SetAdjacency(collision.gameObject, 2);
+                PropagateRowIndex();
             }
             else
             {
                 SetAdjacency(collision.gameObject, 3);
                 SetLeftRightAdjacencies();
+                cubeRowIndex = collision.gameObject.GetComponent<CubeScript>().cubeRowIndex + 1;
             }
 
 
@@ -100,7 +103,9 @@ public class CubeScript : MonoBehaviour {
             destroyable = false;
            
         } else if (collision.gameObject.tag == "Ground"){
-            cubeManager.SetCubeBottomRow(gameObject, cubeIndex);
+            cubeManager.SetCubeBottomRow(gameObject, cubeColIndex);
+            cubeRowIndex = 0;
+            PropagateRowIndex();
             SetLeftRightAdjacencies();
             //cubeManager.AdjustCubeRow(gameObject);
 
@@ -121,6 +126,21 @@ public class CubeScript : MonoBehaviour {
 
     }
 
+    public int GetCubeRowIndex() {
+        return cubeRowIndex;
+    }
+
+    public void SetCubeRowIndex(int rowIndex) {
+        cubeRowIndex = rowIndex;
+    }
+
+    public void PropagateRowIndex() {
+        if (adjacencies[2] == null) return;
+        CubeScript cs = adjacencies[2].GetComponent<CubeScript>();
+        cs.SetCubeRowIndex(cubeRowIndex + 1);
+        cs.SetLeftRightAdjacencies();
+        cs.PropagateRowIndex();
+    }
     //If first cube is below the second cube, return true
     public bool IsCubeBelow(GameObject cube, GameObject otherCube) {
         if (cube.transform.position.y < otherCube.transform.position.y) {
@@ -145,28 +165,17 @@ public class CubeScript : MonoBehaviour {
     }
 
     public void SetLeftRightAdjacencies() {
-        GameObject cubeBelow = adjacencies[3];
-        if (cubeBelow == null) {
-            SetAdjacency(cubeManager.GetCubeAtIndex(cubeIndex - 1, 0), 0);
-            SetAdjacency(cubeManager.GetCubeAtIndex(cubeIndex + 1, 0), 1);
-            return;
-        } else {
-            GameObject cubeDiagLeft = cubeBelow.GetComponent<CubeScript>().adjacencies[0];
-            GameObject cubeDiagRight = cubeBelow.GetComponent<CubeScript>().adjacencies[1];
-            if (cubeDiagLeft != null) {
-                SetAdjacency(cubeDiagLeft.GetComponent<CubeScript>().adjacencies[2], 0);
-            }
-            if (cubeDiagRight != null) {
-                SetAdjacency(cubeDiagRight.GetComponent<CubeScript>().adjacencies[2], 1);
-            }
-        }
+        GameObject left = cubeManager.GetCubeAtIndex(cubeColIndex - 1, cubeRowIndex);
+        GameObject right = cubeManager.GetCubeAtIndex(cubeColIndex + 1, cubeRowIndex);
+        SetAdjacency(left, 0);
+        SetAdjacency(right, 1);
+
     }
 
     public void SetAdjacency(GameObject go, int index) {
         if (go == null) {
             return;
         }
-
         adjacencies[index] = go;
         int otherIndex;
         switch (index) {
@@ -216,7 +225,6 @@ public class CubeScript : MonoBehaviour {
             } 
         }
         reader.Close();
-        Debug.Log(closestIndex);
         return closestIndex;
     }
 
