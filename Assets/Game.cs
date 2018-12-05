@@ -10,6 +10,7 @@ public class Game : MonoBehaviour {
     [SerializeField] private GameObject gameOverPanel;
     private CubeManager cubeManager;
     private Score score;
+    bool gameOver = false;
     //Awake is always called before any Start functions
     void Awake()
     {
@@ -32,7 +33,14 @@ public class Game : MonoBehaviour {
 
     }
 
-    public CubeManager GetCubeManager() {
+	private void Update()
+	{
+        if (gameOver && (Input.GetKeyDown(KeyCode.R) || OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger))) {
+            Restart();
+        }
+	}
+
+	public CubeManager GetCubeManager() {
         return cubeManager;
     } 
 
@@ -47,6 +55,7 @@ public class Game : MonoBehaviour {
     public void GameOver() {
         gameOverPanel.SetActive(true);
         Time.timeScale = 0;
+        gameOver = true;
     }
 
     public void Restart() {
