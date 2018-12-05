@@ -48,8 +48,9 @@ public class CubeManager : MonoBehaviour
 
     public void HandleCubeCollision(GameObject cube)
     {
+        Debug.Log("Cube Collision Processing...")
         List<GameObject> matchingCubes = FindMatchingCubes(cube);
-        if (matchingCubes.Count >= 3 && cube.GetComponent<CubeScript>().type != CubeType.Glass)
+        if (matchingCubes.Count >= 3)
         {
             game.AdjustScore(matchingCubes.Count);
             Debug.Log(game.GetScore());
