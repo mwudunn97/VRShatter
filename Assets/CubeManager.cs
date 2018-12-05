@@ -74,7 +74,7 @@ public class CubeManager : MonoBehaviour
 
         GameObject cube = cubeRow[col];
         while (cube != null && row > 0) {
-            CubeScript cs = gameObject.GetComponent<CubeScript>();
+            CubeScript cs = cube.GetComponent<CubeScript>();
             if (cs != null) {
                 cube = cs.GetCubeAbove();
                 row -= 1;
