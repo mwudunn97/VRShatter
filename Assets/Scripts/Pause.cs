@@ -5,11 +5,11 @@ using UnityEngine;
 public class Pause : MonoBehaviour
 {
     [SerializeField] private GameObject pausePanel;
-    public Game game;
+    public GameObject game;
     private bool wait = false;
     void Start()
     {
-        pausePanel.SetActive(true);
+        PauseGame();
     }
     void Update()
     {
@@ -26,9 +26,9 @@ public class Pause : MonoBehaviour
 
             StartCoroutine(Wait());
         }
-        else if (Input.GetKeyDown(KeyCode.R) || OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger, OVRInput.Controller.RTouch) > 0.1f) 
+        else if (Input.GetKeyDown(KeyCode.R) || OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger)) 
         {
-            game.Restart();
+            game.GetComponent<Game>().Restart();
         }
     }
     private void PauseGame()
