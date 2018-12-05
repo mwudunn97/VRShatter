@@ -241,8 +241,11 @@ public class CubeScript : MonoBehaviour {
 
                                         
     }
+    public void FadeSelf() {
+        StartCoroutine(Fade());
+    }
 
-    public IEnumerator Fade() {
+    private IEnumerator Fade() {
         Renderer renderer = this.gameObject.GetComponent<Renderer>();
         int passes = 0;
         int totalPasses = 30;
