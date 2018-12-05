@@ -4,13 +4,12 @@ using UnityEngine;
 
 public class Score : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
+    public GameObject textObj;
+    public int score = 0;
 	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    public void AdjustScore(int deltaScore) {
+        score += deltaScore;
+        TextMesh textMesh = textObj.GetComponent<TextMesh>();
+        textMesh.text = score.ToString();
+    }
 }
