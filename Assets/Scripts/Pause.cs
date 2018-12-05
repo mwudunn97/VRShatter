@@ -5,7 +5,7 @@ using UnityEngine;
 public class Pause : MonoBehaviour
 {
     [SerializeField] private GameObject pausePanel;
-    public GameObject game;
+    public Game game;
     private bool wait = false;
     void Start()
     {
@@ -28,7 +28,7 @@ public class Pause : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.R) || OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger)) 
         {
-            game.GetComponent<Game>().Restart();
+            game.Restart();
         }
     }
     private void PauseGame()
