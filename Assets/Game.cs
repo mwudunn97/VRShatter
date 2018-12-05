@@ -1,12 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+
 
 public class Game : MonoBehaviour {
 
     public static Game instance = null;
+    [SerializeField] private GameObject gameOverPanel;
     private CubeManager cubeManager;
-    public Score score;
+    private Score score;
     //Awake is always called before any Start functions
     void Awake()
     {
@@ -25,13 +28,9 @@ public class Game : MonoBehaviour {
         //Sets this to not be destroyed when reloading scene
         DontDestroyOnLoad(gameObject);
         cubeManager = new CubeManager();
+        score = new Score();
 
     }
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 
     public CubeManager GetCubeManager() {
         return cubeManager;
@@ -43,5 +42,14 @@ public class Game : MonoBehaviour {
 
     public int GetScore() {
         return score.GetScore();
+    }
+
+    public void GameOver() {
+        gameOverPanel.SetActive(true);
+        Time.timeScale = 0;
+    }
+
+    public void Restart() {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }

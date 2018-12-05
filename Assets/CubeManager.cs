@@ -264,5 +264,10 @@ public class CubeManager : MonoBehaviour
         //Debug.Log(str);
     }
 
+    public void CubeAboveThreshold() {
+        game.GameOver();
+    }
+
+
 
 }

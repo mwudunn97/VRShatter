@@ -5,6 +5,7 @@ using UnityEngine;
 public class Pause : MonoBehaviour
 {
     [SerializeField] private GameObject pausePanel;
+    public Game game;
     private bool wait = false;
     void Start()
     {
@@ -24,6 +25,10 @@ public class Pause : MonoBehaviour
             }
 
             StartCoroutine(Wait());
+        }
+        else if (Input.GetKeyDown(KeyCode.R) || OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger, OVRInput.Controller.RTouch) > 0.1f) 
+        {
+            game.Restart();
         }
     }
     private void PauseGame()
