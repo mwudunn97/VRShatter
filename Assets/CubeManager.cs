@@ -82,7 +82,7 @@ public class CubeManager : MonoBehaviour
 
     public GameObject GetCubeAtIndex(int col, int row)
     {
-        if (col > cubeSpread) col = col % cubeSpread;
+        if (col >= cubeSpread) col = col % cubeSpread;
         if (col < 0) col = cubeSpread + col;
 
         GameObject cube = cubeRow[col];
