@@ -26,7 +26,7 @@ public class Pause : MonoBehaviour
 
             StartCoroutine(Wait());
         }
-        else if (Input.GetKeyDown(KeyCode.R) || OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger)) 
+        else if (pausePanel.activeInHierarchy && (Input.GetKeyDown(KeyCode.R) || OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger)))
         {
             game.Restart();
         }
