@@ -12,4 +12,8 @@ public class Score : MonoBehaviour {
         TextMesh textMesh = textObj.GetComponent<TextMesh>();
         textMesh.text = score.ToString();
     }
+
+    public int GetScore() {
+        return score;
+    }
 }
