@@ -42,7 +42,7 @@ public class Pause : MonoBehaviour
     public IEnumerator Wait()
     {
         wait = true;
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSecondsRealtime(0.2f);
         wait = false;
     }
 }
