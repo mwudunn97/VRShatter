@@ -89,7 +89,7 @@ public class CubeManager : MonoBehaviour
         while (cube != null && row > 0) {
             CubeScript cs = gameObject.GetComponent<CubeScript>();
             if (cs != null) {
-                cube = cs.adjacencies[2];
+                cube = cs.GetCubeAbove();
                 row -= 1;
             } else {
                 return null;
@@ -109,7 +109,7 @@ public class CubeManager : MonoBehaviour
             if (cubeScript == null) {
                 break;
             }
-            cube = cubeScript.adjacencies[2];
+            cube = cubeScript.GetCubeAbove();
             counter++;
         }
         return counter;
@@ -122,7 +122,7 @@ public class CubeManager : MonoBehaviour
         List<GameObject> candidateCubes = new List<GameObject>();
         matchingCubes.Add(cube);
 
-        AddRangeNonNull(candidateCubes, matchingCubes, cubeScript.adjacencies);
+        AddRangeNonNull(candidateCubes, matchingCubes, cubeScript);
 
         while (candidateCubes.Count > 0)
         {
@@ -133,7 +133,7 @@ public class CubeManager : MonoBehaviour
             if (nextCube.type == cubeScript.type)
             {
                 matchingCubes.Add(nextCubeGO);
-                AddRangeNonNull(candidateCubes, matchingCubes, nextCube.adjacencies);
+                AddRangeNonNull(candidateCubes, matchingCubes, nextCube);
             }
         }
         var arr = new GameObject[matchingCubes.Count];
@@ -141,9 +141,10 @@ public class CubeManager : MonoBehaviour
         return new List<GameObject>(arr);
     }
 
-    public void AddRangeNonNull(List<GameObject> candidates, HashSet<GameObject> matches, GameObject[] adjacencies) {
-        foreach (GameObject go in adjacencies)
+    public void AddRangeNonNull(List<GameObject> candidates, HashSet<GameObject> matches, CubeScript cubeScript) {
+        for (int i = 0; i < 4; i++)
         {
+            GameObject go = cubeScript.GetCubeAdjacency(i);
             if (go != null && !matches.Contains(go))
             {
                 candidates.Add(go);
