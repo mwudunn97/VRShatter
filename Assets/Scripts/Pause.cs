@@ -5,13 +5,14 @@ using UnityEngine;
 public class Pause : MonoBehaviour
 {
     [SerializeField] private GameObject pausePanel;
+    private bool wait = false;
     void Start()
     {
         pausePanel.SetActive(false);
     }
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) || OVRInput.Get(OVRInput.Button.Two))
+        if (!wait && (Input.GetKeyDown(KeyCode.Space) || OVRInput.Get(OVRInput.Button.Two)))
         {
             if (!pausePanel.activeInHierarchy)
             {
@@ -21,6 +22,8 @@ public class Pause : MonoBehaviour
             {
                 ContinueGame();
             }
+
+            StartCoroutine(Wait());
         }
     }
     private void PauseGame()
@@ -34,5 +37,12 @@ public class Pause : MonoBehaviour
         Time.timeScale = 1;
         pausePanel.SetActive(false);
         //enable the scripts again
+    }
+
+    public IEnumerator Wait()
+    {
+        wait = true;
+        yield return new WaitForSeconds(0.2f);
+        wait = false;
     }
 }
