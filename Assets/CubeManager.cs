@@ -49,11 +49,10 @@ public class CubeManager : MonoBehaviour
     public void HandleCubeCollision(GameObject cube)
     {
         List<GameObject> matchingCubes = FindMatchingCubes(cube);
-        Debug.Log("Cube Count Found:...");
         if (matchingCubes.Count >= 3)
         {
             game.AdjustScore(matchingCubes.Count);
-            Debug.Log(game.GetScore());
+            //Debug.Log(game.GetScore());
             while (matchingCubes.Count > 0) {
                 GameObject go = matchingCubes[0];
                 matchingCubes.RemoveAt(0);
