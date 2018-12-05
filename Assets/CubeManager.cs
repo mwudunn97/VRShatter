@@ -86,7 +86,7 @@ public class CubeManager : MonoBehaviour
         if (col < 0) col = cubeSpread + col;
 
         GameObject cube = cubeRow[col];
-        while (cube != null && row >= 0) {
+        while (cube != null && row > 0) {
             cube = gameObject.GetComponent<CubeScript>().adjacencies[2];
             row -= 1;
         }
