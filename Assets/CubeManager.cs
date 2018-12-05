@@ -24,7 +24,7 @@ public class CubeManager : MonoBehaviour
     float zDist = 5.0f;
     int cubeSpread = 13;
     int cubeProbabilitySeed = 0;
-    private GameObject[] cubeRow;
+    public GameObject[] cubeRow;
 
     private void Start()
     {
