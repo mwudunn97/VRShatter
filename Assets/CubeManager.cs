@@ -20,14 +20,16 @@ public class CubeManager : MonoBehaviour
 
 
     bool shouldSpawn = true;
-    float gameSpeed = 12.0f;
+    float gameSpeed = 9.0f;
     float zDist = 5.0f;
     int cubeSpread = 13;
     int cubeProbabilitySeed = 0;
     public GameObject[] cubeRow;
+    float startTime;
 
     private void Start()
     {
+        startTime = Time.time;
         cubeRow = new GameObject[cubeSpread];
     }
 
@@ -210,6 +212,10 @@ public class CubeManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Time.time - startTime > 5.0f) {
+            gameSpeed += 1.0f;
+            startTime = Time.time;
+        }
         if (shouldSpawn)
         {
             Spawn();

@@ -30,6 +30,7 @@ public class Game : MonoBehaviour {
         DontDestroyOnLoad(gameObject);
         cubeManager = new CubeManager();
         score = new Score();
+        gameOverPanel.SetActive(false);
 
     }
 
