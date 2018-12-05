@@ -236,25 +236,24 @@ public class CubeScript : MonoBehaviour {
         backFaceRef.loopmode = MegaCacheRepeatMode.Clamp;
         backFaceRef.fps = 40;
 
-        StartCoroutine(Fade());
+        StartCoroutine(Fade(30));
 
 
                                         
     }
-    public void FadeSelf() {
-        StartCoroutine(Fade());
+    public void FadeSelf(int frames) {
+        StartCoroutine(Fade(frames));
     }
 
-    private IEnumerator Fade() {
+    private IEnumerator Fade(int frames) {
         Renderer renderer = this.gameObject.GetComponent<Renderer>();
         int passes = 0;
-        int totalPasses = 30;
         float origAlpha = renderer.material.color.a;
-        while (passes < totalPasses)
+        while (passes < frames)
         {
             var color = renderer.material.color;
             color.a = 0.0f;
-            float fadeSpeed = origAlpha / (float) totalPasses;
+            float fadeSpeed = origAlpha / (float) frames;
             renderer.material.color = Color.Lerp(renderer.material.color, color, fadeSpeed);
 
             for (int i = 0; i < this.gameObject.transform.childCount; i++)

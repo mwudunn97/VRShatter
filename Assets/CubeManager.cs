@@ -57,7 +57,7 @@ public class CubeManager : MonoBehaviour
                 GameObject go = matchingCubes[0];
                 matchingCubes.RemoveAt(0);
                 //Destroy(go);
-                go.GetComponent<CubeScript>().FadeSelf();
+                go.GetComponent<CubeScript>().FadeSelf(15);
             }
         }
     }
