@@ -269,7 +269,9 @@ public class CubeScript : MonoBehaviour {
         }
 
         cubeManager.AdjustCubeRow(gameObject);
-        setNeighborsDestroyable();
+        if (type == CubeType.Glass) {
+            setNeighborsDestroyable();
+        }
         Destroy(gameObject);
         Destroy(this.gameObject);
 
