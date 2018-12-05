@@ -213,13 +213,14 @@ public class CubeScript : MonoBehaviour {
             } 
         }
         reader.Close();
+        Debug.Log(closestIndex);
         return closestIndex;
     }
 
     public void SetClusterAnimation(Vector2 pos) {
         //Add array of refs and obj to public params
         int clusterIndex = GetClusterIndex(pos);
-        //int clusterIndex = 0;
+        //int clusterIndex = 2;
         GameObject shatterAnimation = cubeManager.ShatterCacheObjs[clusterIndex];
         MegaCacheOBJ shatterMCO = shatterAnimation.GetComponent<MegaCacheOBJ>();
 
@@ -227,13 +228,13 @@ public class CubeScript : MonoBehaviour {
         frontFaceRef.SetSource(shatterMCO);
         frontFaceRef.animate = true;
         frontFaceRef.loopmode = MegaCacheRepeatMode.Clamp;
-        frontFaceRef.fps = 50;
+        frontFaceRef.fps = 40;
                                                           
         MegaCacheOBJRef backFaceRef = shatterCacheRefs[1].GetComponent<MegaCacheOBJRef>();
         backFaceRef.SetSource(shatterMCO);
         backFaceRef.animate = true;
         backFaceRef.loopmode = MegaCacheRepeatMode.Clamp;
-        backFaceRef.fps = 50;
+        backFaceRef.fps = 40;
 
         StartCoroutine(Fade());
 
@@ -244,7 +245,7 @@ public class CubeScript : MonoBehaviour {
     public IEnumerator Fade() {
         Renderer renderer = this.gameObject.GetComponent<Renderer>();
         int passes = 0;
-        int totalPasses = 15;
+        int totalPasses = 30;
         float origAlpha = renderer.material.color.a;
         while (passes < totalPasses)
         {
@@ -252,7 +253,6 @@ public class CubeScript : MonoBehaviour {
             color.a = 0.0f;
             float fadeSpeed = origAlpha / (float) totalPasses;
             renderer.material.color = Color.Lerp(renderer.material.color, color, fadeSpeed);
-            Debug.Log(renderer.material.color.a);
 
             for (int i = 0; i < this.gameObject.transform.childCount; i++)
             {
