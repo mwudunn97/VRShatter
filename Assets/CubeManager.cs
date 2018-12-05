@@ -22,7 +22,7 @@ public class CubeManager : MonoBehaviour
     bool shouldSpawn = true;
     float gameSpeed = 12.0f;
     float zDist = 5.0f;
-    int cubeSpread = 27;
+    int cubeSpread = 13;
     int cubeProbabilitySeed = 0;
     private GameObject[] cubeRow;
 
@@ -66,27 +66,6 @@ public class CubeManager : MonoBehaviour
         return cubeSpread;
     }
 
-    public void AdjustCubeRow(GameObject cube) {
-        List<GameObject> matchingCubes = FindMatchingCubes(cube);
-        if (matchingCubes.Count >= 3 && cube.GetComponent<CubeScript>().type != CubeType.Glass)
-        {
-            foreach (GameObject cubeGO in matchingCubes)
-            {
-                var location = cube.GetComponent<CubeScript>().GetCubeIndex();
-                if (cube == cubeRow[location])
-                {
-                    GameObject nonmatchingCube = SearchAboveForMismatch(cube);
-                    if (nonmatchingCube != null)
-                    {
-                        cubeRow[location] = nonmatchingCube;
-                        SetCubeBottomRow(nonmatchingCube, location);
-                    }
-
-                }
-            }
-        }
-    }
-
     public GameObject SearchAboveForMismatch(GameObject go) {
         var originalType = go.GetComponent<CubeScript>().type;
         CubeScript nextCube = go.GetComponent<CubeScript>();
@@ -102,6 +81,9 @@ public class CubeManager : MonoBehaviour
 
     public GameObject GetCubeAtIndex(int col, int row)
     {
+        if (col > cubeSpread) col = col % cubeSpread;
+        if (col < 0) col = cubeSpread + col;
+
         GameObject cube = cubeRow[col];
         while (cube != null && row >= 0) {
             cube = gameObject.GetComponent<CubeScript>().adjacencies[2];
@@ -225,7 +207,7 @@ public class CubeManager : MonoBehaviour
                 cubePrefab);
         }
         cube.GetComponent<CubeScript>().cubeManager = this;
-        int index = Random.Range(0, (int)cubeSpread / 2 - 1);
+        int index = Random.Range(0, cubeSpread);
         cube.GetComponent<CubeScript>().SetType(nextType);
         placeCube(cube, index);
 
@@ -254,26 +236,47 @@ public class CubeManager : MonoBehaviour
         var position = cube.transform.position;
         var rotation = cube.transform.rotation;
 
-        cube.transform.Rotate(0.0f, locationIndex * (360.0f / cubeSpread), 0.0f);
+        cube.transform.Rotate(0.0f, locationIndex * (360.0f / (cubeSpread * 2 + 1)), 0.0f);
         cube.transform.position = position + cube.transform.forward * zDist;
 
-        SetCubeBottomRow(cube, locationIndex);
+        //SetCubeBottomRow(cube, locationIndex);
 
         cube.GetComponent<CubeScript>().SetCubeIndex(locationIndex);
     }
 
     public void SetCubeBottomRow(GameObject cube, int locationIndex) {
-        if (cubeRow[locationIndex] == null)
-        {
-            cubeRow[locationIndex] = cube;
-            var leftIndex = (locationIndex + cubeSpread - 1) % cubeSpread;
-            var rightIndex = (locationIndex + 1) % cubeSpread;
+        cubeRow[locationIndex] = cube;
+        //var leftIndex = (locationIndex + cubeSpread - 1) % cubeSpread;
+        //var rightIndex = (locationIndex + 1) % cubeSpread;
 
-           
+        //cube.GetComponent<CubeScript>().SetAdjacency(cubeRow[leftIndex], 0);
+        //cube.GetComponent<CubeScript>().SetAdjacency(cubeRow[rightIndex], 1);
+    }
 
-            cube.GetComponent<CubeScript>().SetAdjacency(cubeRow[leftIndex], 0);
-            cube.GetComponent<CubeScript>().SetAdjacency(cubeRow[rightIndex], 1);
-        }
+    //public void AdjustCubeRow(GameObject cube)
+    //{
+    //    List<GameObject> matchingCubes = FindMatchingCubes(cube);
+    //    if (matchingCubes.Count >= 3 && cube.GetComponent<CubeScript>().type != CubeType.Glass)
+    //    {
+    //        foreach (GameObject cubeGO in matchingCubes)
+    //        {
+    //            var location = cube.GetComponent<CubeScript>().GetCubeIndex();
+    //            if (cube == cubeRow[location])
+    //            {
+    //                GameObject nonmatchingCube = SearchAboveForMismatch(cube);
+    //                if (nonmatchingCube != null)
+    //                {
+    //                    cubeRow[location] = nonmatchingCube;
+    //                    SetCubeBottomRow(nonmatchingCube, location);
+    //                }
+
+    //            }
+    //        }
+    //    }
+    //}
+
+    public GameObject GetCubeButtomRow(int locationIndex) {
+        return cubeRow[locationIndex];
     }
 
     public void WriteString(string str)

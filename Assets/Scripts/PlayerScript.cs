@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerScript : MonoBehaviour {
 
     public GameObject projectilePrefab;
-    private float reloadTime = 0.5f;
+    private float reloadTime = 0.3f;
     private bool reload = false;
     private float projectileForce = 40.0f;
 	

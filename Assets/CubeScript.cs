@@ -91,7 +91,7 @@ public class CubeScript : MonoBehaviour {
             }
 
 
-            cubeManager.AdjustCubeRow(gameObject);
+            //cubeManager.AdjustCubeRow(gameObject);
 
             if (type != CubeType.Glass && destroyable)
             {
@@ -101,7 +101,8 @@ public class CubeScript : MonoBehaviour {
            
         } else if (collision.gameObject.tag == "Ground"){
             cubeManager.SetCubeBottomRow(gameObject, cubeIndex);
-            cubeManager.AdjustCubeRow(gameObject);
+            SetLeftRightAdjacencies();
+            //cubeManager.AdjustCubeRow(gameObject);
 
             if (type != CubeType.Glass && destroyable)
             {
@@ -146,6 +147,8 @@ public class CubeScript : MonoBehaviour {
     public void SetLeftRightAdjacencies() {
         GameObject cubeBelow = adjacencies[3];
         if (cubeBelow == null) {
+            SetAdjacency(cubeManager.GetCubeAtIndex(cubeIndex - 1, 0), 0);
+            SetAdjacency(cubeManager.GetCubeAtIndex(cubeIndex + 1, 0), 1);
             return;
         } else {
             GameObject cubeDiagLeft = cubeBelow.GetComponent<CubeScript>().adjacencies[0];
@@ -270,7 +273,7 @@ public class CubeScript : MonoBehaviour {
             yield return new WaitForSeconds(0.01f);
         }
 
-        cubeManager.AdjustCubeRow(gameObject);
+        //cubeManager.AdjustCubeRow(gameObject);
         if (type == CubeType.Glass) {
             setNeighborsDestroyable();
         }
