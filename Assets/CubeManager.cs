@@ -48,7 +48,7 @@ public class CubeManager : MonoBehaviour
 
     public void HandleCubeCollision(GameObject cube)
     {
-        Debug.Log("Cube Collision Processing...")
+        Debug.Log("Cube Collision Processing...");
         List<GameObject> matchingCubes = FindMatchingCubes(cube);
         if (matchingCubes.Count >= 3)
         {
