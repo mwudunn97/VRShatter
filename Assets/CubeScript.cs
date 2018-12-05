@@ -199,6 +199,14 @@ public class CubeScript : MonoBehaviour {
         go.GetComponent<CubeScript>().adjacencies[otherIndex] = gameObject;
     }
 
+    public GameObject GetCubeAbove() {
+        return adjacencies[2];
+    }
+
+    public GameObject GetCubeAdjacency(int index) {
+        return adjacencies[index];
+    }
+
     public int GetClusterIndex(Vector2 pos) {
         string path = "Assets/Resources/clusters.txt";
 
