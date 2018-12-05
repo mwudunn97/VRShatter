@@ -133,7 +133,7 @@ public class CubeScript : MonoBehaviour {
 
     public void SetCubeRowIndex(int rowIndex) {
         cubeRowIndex = rowIndex;
-        if(cubeRowIndex > 6) {
+        if(cubeRowIndex > 7) {
             cubeManager.CubeAboveThreshold();
         }
     }
