@@ -14,7 +14,7 @@ public class Score : MonoBehaviour {
 
 	public void AdjustScore(int deltaScore) {
         score += deltaScore;
-        TextMesh textMesh = gameObject.GetComponent<TextMesh>();
+        TextMesh textMesh = GameObject.FindGameObjectWithTag("Score").GetComponent<TextMesh>();
         textMesh.text = score.ToString();
     }
 
